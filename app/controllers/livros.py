@@ -14,3 +14,11 @@ def gera_response(status, name_content, content=None, msg=""):
 def take_book(id_book):
     book = Livro.query.filter_by(id=id_book).first()
     return book
+
+
+def take_all_books():
+    books_obj = Livro.query.all()
+    books_json = [book.to_json() for book in books_obj]
+
+    return jsonify(books_json)
+

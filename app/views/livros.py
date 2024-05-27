@@ -1,17 +1,14 @@
 from flask import request, Response, jsonify, Blueprint
 from ..models.livros import Livro
 from app.db import db
-from ..controllers.livros import gera_response, take_book
+from ..controllers.livros import gera_response, take_book, take_all_books
 
 livros_bp = Blueprint("livros", __name__)
 
 
 @livros_bp.route("/books", methods=["GET"])
 def get_books():
-    livros = Livro.query.all()
-    livros_json = [livro.to_json() for livro in livros]
-
-    return jsonify(livros_json)
+    return take_all_books()
 
 
 @livros_bp.route("/book", methods=["POST"])
