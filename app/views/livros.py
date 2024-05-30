@@ -7,7 +7,7 @@ livros_bp = Blueprint("livros", __name__)
 
 
 @livros_bp.route("/books", methods=["GET"])
-def get_books():
+def get_bookss():
     return take_all_books()
 
 

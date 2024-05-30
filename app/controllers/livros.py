@@ -18,7 +18,7 @@ def take_book(id_book):
 
 def take_all_books():
     books_obj = Livro.query.all()
-    books_json = [book.to_json() for book in books_obj]
+    boooks_json = [book.to_json() for book in books_obj]
 
-    return jsonify(books_json)
+    return jsonify(boooks_json)
 
