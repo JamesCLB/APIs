@@ -4,7 +4,7 @@ db = SQLAlchemy()
 
 
 def init_db(app):
-    from .models.livros import Livro
+    from .models.models import Livro
 
     # with app.app_context():
     #     db.create_all()

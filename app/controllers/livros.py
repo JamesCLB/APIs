@@ -1,5 +1,5 @@
 from flask import jsonify
-from ..models.livros import Livro
+from ..models.models import Livro, User
 
 
 def gera_response(status, name_content, content=None, msg=""):
