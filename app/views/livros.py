@@ -1,7 +1,6 @@
-from flask import request, Response, jsonify, Blueprint
-from ..models.models import Livro, User
+from flask import request, Blueprint
 from app.db import db
-from ..controllers.livros import gera_response, take_book, take_all_books, create_book, delete_book, upd_book
+from ..controllers.livros import take_book, take_all_books, create_book, delete_book, upd_book
 
 livros_bp = Blueprint("livros", __name__)
 
