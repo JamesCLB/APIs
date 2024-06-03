@@ -1,14 +1,15 @@
 from flask import Flask
 from .config import Config
-from .db import init_db
+from .db import db
 from .views.livros import livros_bp
+from flask_migrate import Migrate
 
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     app.register_blueprint(livros_bp)
-
-    init_db(app)
+    db.init_app(app)
+    migrate = Migrate(app, db)
 
     return app
