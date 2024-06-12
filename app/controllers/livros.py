@@ -1,14 +1,6 @@
 from flask import jsonify
 from ..models.models import Livro, User
-
-
-def gera_response(status, name_content, content=None, msg=""):
-    body = {name_content: content}
-
-    if msg:
-        body["mensagem"] = msg
-
-    return jsonify(body), status
+from . import gera_response
 
 
 def take_book(id_book):
