@@ -16,7 +16,8 @@ class Livro(db.Model):
         return f"Book: {self.title}"
 
     def to_json(self):
-        return {"id": self.id, "title": self.title, "author": self.author, "published_date": self.published_date}
+        return {"id": self.id, "title": self.title, "author": self.author, "published_date": self.published_date,
+                "users": [user.to_json() for user in self.users.all()]}
 
 
 class User(db.Model):
@@ -27,4 +28,5 @@ class User(db.Model):
     books = db.relationship("Livro", secondary=user_books, lazy="dynamic", backref=db.backref("users", lazy=True))
 
     def to_json(self):
-        return {"id": self.id, "user_name": self.user_name, "password": self.password}
+        return {"id": self.id, "user_name": self.user_name, "password": self.password,
+                "books": [book.to_json() for book in self.books.all()]}
