@@ -16,8 +16,7 @@ class Livro(db.Model):
         return f"Book: {self.title}"
 
     def to_json(self):
-        return {"id": self.id, "title": self.title, "author": self.author, "published_date": self.published_date,
-                "users": [user.to_json() for user in self.users.all()]}
+        return {"id": self.id, "title": self.title, "author": self.author, "published_date": self.published_date}
 
 
 class User(db.Model):
