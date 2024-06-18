@@ -21,6 +21,8 @@ def add_user_book(user_id, session, body):
 
 def get_user_books(session):
     user_books_obj = session.execute(user_books.select()).fetchall()
-    user_books_json = [user_book.to_json() for user_book in user_books_obj]
+    user_books_json = []
+    for user_book in user_books_obj:
+        user_books_json.append({"user": user_book.user_id, "book": user_book.book_id})
 
     return jsonify(user_books_json)
