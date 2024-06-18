@@ -26,3 +26,5 @@ def get_user_books(session):
         user_books_json.append({"user": user_book.user_id, "book": user_book.book_id})
 
     return jsonify(user_books_json)
+
+

@@ -29,7 +29,7 @@ def delete_book_route(id_book):
 
 
 @livros_bp.route("/book/<id_book>", methods=["PUT"])
-def att_book_route(id_book):
+def put_book_route(id_book):
     body = request.get_json()
     session = db.session
     return upd_book(id_book, session, body)
