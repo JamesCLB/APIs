@@ -2,7 +2,8 @@ from app.db import db
 
 user_books = db.Table("user_books",
                       db.Column("user_id", db.Integer, db.ForeignKey("user.id"), primary_key=True),
-                      db.Column('book_id', db.Integer, db.ForeignKey('livro.id'), primary_key=True)
+                      db.Column('book_id', db.Integer, db.ForeignKey('livro.id'), primary_key=True),
+                      db.Column("status", db.String(50), nullable=False)
                       )
 
 

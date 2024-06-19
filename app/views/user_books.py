@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from ..controllers.user_books import add_user_book, get_user_books
+from ..controllers.user_books import add_user_book, get_user_books, upd_user_book
 from ..db import db
 
 user_books_bp = Blueprint("user_books", __name__, url_prefix="/user_books")
@@ -17,6 +17,11 @@ def get_user_books_route():
     return get_user_books(session)
 
 
+@user_books_bp.route("/user/<int:id_user>/book/<int:id_book>", methods=["PUT"])
+def put_user_book_route(id_user, id_book):
+    session = db.session
+    body = request.get_json()
+    return upd_user_book(session, id_user, id_book, body)
 
 
 
