@@ -53,9 +53,45 @@ def upd_user_book(session, user_id, book_id, body):
             )
             session.commit()
 
+        user_book_obj = session.execute(
+            user_books.select().where(
+                user_books.c.user_id == user_id,
+                user_books.c.book_id == book_id
+            )
+        ).first()
+
         return gera_response(200, "user_book", user_book_to_json(user_book_obj), "book status updated")
 
     except Exception as e:
         print(e)
         return gera_response(400, "user_book", {}, "error to update the user_book")
 
+
+def delete_user_book(id_user, body, session):
+    if "book_id" not in body:
+        return gera_response(400, "user_book", {}, "id book required")
+    id_book = body["book_id"]
+    user_book_obj = session.execute(
+        user_books.select().where(
+            user_books.c.book_id == id_book,
+            user_books.c.user_id == id_user
+        )
+    ).first()
+
+    if not user_book_obj:
+        return gera_response(404, "user_book", {}, "user book not found")
+    try:
+
+        session.execute(
+            user_books.delete().where(
+                user_books.c.book_id == id_book,
+                user_books.c.book_id == id_user
+            )
+        )
+
+        session.commit()
+
+        return gera_response(200, "user_book", {}, "user book deleted")
+    except Exception as e:
+        print(e)
+        return gera_response(400, "user_book", {}, "error to delete the user_book")

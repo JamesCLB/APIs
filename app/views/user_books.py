@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from ..controllers.user_books import add_user_book, get_user_books, upd_user_book
+from ..controllers.user_books import add_user_book, get_user_books, upd_user_book, delete_user_book
 from ..db import db
 
 user_books_bp = Blueprint("user_books", __name__, url_prefix="/user_books")
@@ -24,4 +24,8 @@ def put_user_book_route(id_user, id_book):
     return upd_user_book(session, id_user, id_book, body)
 
 
-
+@user_books_bp.route("/user/<int:id_user>", methods=["DELETE"])
+def delete_user_book_route(id_user):
+    body = request.get_json()
+    session = db.session
+    return delete_user_book(id_user, body, session)
