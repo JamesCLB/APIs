@@ -4,7 +4,10 @@ from . import gera_response
 
 
 def take_book(id_book):
+
     book = Livro.query.filter_by(id=id_book).first()
+    if not book:
+        return gera_response("404", "book", {}, f"book with id {id_book} not found")
     return book
 
 
@@ -27,6 +30,12 @@ def create_book(body, session):
             return gera_response(400, "book", {}, "published date required")
         published_date = body["published_date"]
 
+        if title.strip() == "":
+            return gera_response("400", "book", {}, "title required")
+
+        book_exist = Livro.query.filter_by(title=title).first()
+        if book_exist:
+            return gera_response(400, "book", {}, f"error, the book {title} already exist")
         new_book = Livro(title=title, author=author, published_date=published_date)
 
         session.add(new_book)
