@@ -14,8 +14,9 @@ def get_books_route():
 def get_book_route(id_book):
     book = take_book(id_book)
 
-    if isinstance(book, tuple):  # Verifica se é uma resposta de erro
+    if isinstance(book, tuple):
         return book
+
     return take_book(id_book).to_json()
 
 

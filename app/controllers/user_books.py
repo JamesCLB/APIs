@@ -17,6 +17,15 @@ def add_user_book(user_id, session, body):
     if not user_obj or not book_obj:
         return gera_response(400, "user_books", {}, "book and user required")
 
+    user_book_exist = True if session.execute(
+        user_books.select().where(
+            user_id == user_id,
+            book_id == book_id
+        )
+    ) else False
+
+    if user_book_exist:
+        return gera_response(409, "user_books", {}, "error, book already associated with user")
     user_obj.books.append(book_obj)
     session.commit()
 

@@ -7,6 +7,7 @@ def take_user(id_user):
     user = User.query.filter_by(id=id_user).first()
     return user
 
+
 def take_all_users():
     users_obj = User.query.all()
     users_json = [user.to_json() for user in users_obj]
@@ -16,12 +17,17 @@ def take_all_users():
 
 def create_user(body, session):
     try:
-        if "user_name" not in body:
+        if "user_name" not in body or body["user_name"].strip() == "":
             return gera_response(400, "user", {}, "user name required")
         user_name = body["user_name"]
-        if "password" not in body:
+        if "password" not in body or body["password"].strip() == "":
             return gera_response(400, "user", {}, "password required")
         password = body["password"]
+
+        user_exist = User.query.filter_by(user_name=user_name).first()
+
+        if user_exist:
+            return gera_response(400, "user", {}, "username already used")
 
         new_user = User(user_name=user_name, password=password)
 
