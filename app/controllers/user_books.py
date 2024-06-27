@@ -1,6 +1,7 @@
 from ..models.models import Livro, User, user_books
 from ..controllers import gera_response
 from flask import jsonify
+from app.db import db
 
 
 def user_book_to_json(user_book):
@@ -10,35 +11,30 @@ def user_book_to_json(user_book):
         return None
 
 
+def take_user_books(user_id):
+    user_obj = User.query.filter(User.id == user_id).first()
+    books_json = [book.to_json() for book in user_obj.books]
+
+    return gera_response(200, "books", books_json, "books")
+
+
 def add_user_book(user_id, session, body):
-    book_id = body["id"]
-    user_obj = User.query.filter_by(id=user_id).first()
-    book_obj = Livro.query.filter_by(id=book_id).first()
-    if not user_obj or not book_obj:
-        return gera_response(400, "user_books", {}, "book and user required")
+    try:
+        book_id = body["ids"]
+        user_obj = User.query.filter_by(id=user_id).first()
+        book_objs = Livro.query.filter(Livro.id.in_(book_id))
+        if not user_obj or not book_objs:
+            return gera_response(400, "user_books", {}, "book and user required")
 
-    user_book_exist = True if session.execute(
-        user_books.select().where(
-            user_id == user_id,
-            book_id == book_id
-        )
-    ) else False
+        for book in book_objs:
+            if book not in user_obj.books:
+                user_obj.books.append(book)
 
-    if user_book_exist:
-        return gera_response(409, "user_books", {}, "error, book already associated with user")
-    user_obj.books.append(book_obj)
-    session.commit()
-
-    return gera_response(200, "user_books", user_obj.to_json(), "book added to user")
-
-
-def get_user_books(session):
-    user_books_obj = session.execute(user_books.select()).fetchall()
-    user_books_json = []
-    for user_book in user_books_obj:
-        user_books_json.append(user_book_to_json(user_book))
-
-    return jsonify(user_books_json)
+        session.commit()
+    except Exception as e:
+        print(e)
+        return gera_response(400, "user_books", {}, "Error to add the book to user")
+    return gera_response(200, "user_books", user_obj.to_json(), "Books added to user")
 
 
 def upd_user_book(session, user_id, book_id, body):
@@ -76,31 +72,11 @@ def upd_user_book(session, user_id, book_id, body):
         return gera_response(400, "user_book", {}, "error to update the user_book")
 
 
-def delete_user_book(user_id, body, session):
-    if "book_id" not in body:
-        return gera_response(400, "user_book", {}, "id book required")
-    book_id = body["book_id"]
-    user_book_obj = session.execute(
-        user_books.select().where(
-            user_books.c.book_id == book_id,
-            user_books.c.user_id == user_id
-        )
-    ).first()
+def delete_user_book(user_id, book_id):
+    session = db.session
+    session.query(user_books).filter(
+        user_books.c.user_id == user_id,
+        user_books.c.book_id == book_id
+    ).delete()
 
-    if not user_book_obj:
-        return gera_response(404, "user_book", {}, "user book not found")
-    try:
-
-        session.execute(
-            user_books.delete().where(
-                user_books.c.book_id == book_id,
-                user_books.c.user_id == user_id
-            )
-        )
-
-        session.commit()
-
-        return gera_response(200, "user_book", user_book_to_json(user_book_obj), "user book deleted")
-    except Exception as e:
-        print(e)
-        return gera_response(400, "user_book", {}, "error to delete the user_book")
+    return gera_response(200, "user_book", {}, "user book deleted")

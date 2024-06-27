@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, abort
 from ..models.models import Livro, User
 from . import gera_response
 
@@ -6,8 +6,9 @@ from . import gera_response
 def take_book(id_book):
 
     book = Livro.query.filter_by(id=id_book).first()
+
     if not book:
-        return gera_response("404", "book", {}, f"book with id {id_book} not found")
+        abort(404, gera_response("404", "book", {}, f"book with id {id_book} not found"))
     return book
 
 

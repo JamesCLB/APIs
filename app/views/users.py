@@ -1,6 +1,5 @@
-from flask import request, Blueprint, jsonify
+from flask import request, Blueprint
 from app.db import db
-from ..models.models import User
 from ..controllers.users import take_all_users, create_user, delete_user, upd_user, take_user
 
 users_bp = Blueprint("users", __name__)
@@ -8,6 +7,9 @@ users_bp = Blueprint("users", __name__)
 
 @users_bp.route("/user/<id_user>", methods=["GET"])
 def get_user_route(id_user):
+    user = take_user(id_user)
+    if isinstance(user, tuple):
+        return user
     return take_user(id_user).to_json()
 
 

@@ -1,10 +1,18 @@
 from flask import jsonify
 from ..models.models import User
 from . import gera_response
+from sqlalchemy.exc import IntegrityError
 
 
 def take_user(id_user):
+
+    user_exist = True if User.query.filter_by(id=id_user).first() else False
+
+    if not user_exist:
+        return gera_response(400, "user", {}, "user doesnt exist")
+
     user = User.query.filter_by(id=id_user).first()
+    
     return user
 
 
@@ -24,15 +32,14 @@ def create_user(body, session):
             return gera_response(400, "user", {}, "password required")
         password = body["password"]
 
-        user_exist = User.query.filter_by(user_name=user_name).first()
+        try:
+            new_user = User(user_name=user_name, password=password)
 
-        if user_exist:
+            session.add(new_user)
+            session.commit()
+
+        except IntegrityError:
             return gera_response(400, "user", {}, "username already used")
-
-        new_user = User(user_name=user_name, password=password)
-
-        session.add(new_user)
-        session.commit()
 
         return gera_response(200, "user", new_user.to_json(), "user added")
 
