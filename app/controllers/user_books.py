@@ -1,7 +1,18 @@
 from ..models.models import Livro, User, user_books
 from ..controllers import gera_response
-from flask import jsonify
 from app.db import db
+
+user_books_schema = {
+    "type": "object",
+    "title": "user_books_schema",
+    "properties": {
+        "id_book": {"type": "integer"},
+        "id_user": {"type": "integer"},
+        "status": {"type": "string"}
+    },
+    "required": ["id_book", "id_user"],
+    "additionalProperties": False
+}
 
 
 def user_book_to_json(user_book):

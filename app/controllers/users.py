@@ -3,6 +3,17 @@ from ..models.models import User
 from . import gera_response
 from sqlalchemy.exc import IntegrityError
 
+user_schema = {
+    "type": "object",
+    "title": "user_schema",
+    "properties": {
+        "user_name": {"type": "string"},
+        "password": {"type": "string"}
+    },
+    "required": ["user_name", "password"],
+    "additionalProperties": False
+}
+
 
 def take_user(id_user):
 

@@ -1,6 +1,19 @@
 from flask import jsonify, abort
-from ..models.models import Livro, User
+from ..models.models import Livro
 from . import gera_response
+from jsonschema import validate, ValidationError
+
+book_schema = {
+    "type": "object",
+    "title": "book_schema",
+    "properties": {
+        "title": {"type": "string"},
+        "author": {"type": "string"},
+        "published_date": {"type": "string"}
+    },
+    "required": ["title", "author", "published_date"],
+    "additionalProperties": False
+}
 
 
 def take_book(id_book):
@@ -21,6 +34,8 @@ def take_all_books():
 
 def create_book(body, session):
     try:
+        validate(instance=body, schema=book_schema)
+
         if "title" not in body:
             return gera_response(400, "book", {}, "title required")
         title = body["title"]
@@ -42,11 +57,13 @@ def create_book(body, session):
         session.add(new_book)
         session.commit()
 
-        return gera_response(200, "livro", new_book.to_json(), "book added")
-
+        return gera_response(200, "book", new_book.to_json(), "book added")
+    except ValidationError as e:
+        print(e)
+        return gera_response(400, "book", {}, f"validation error: {e.message}")
     except Exception as e:
         print(e)
-        return gera_response(400, "livro", {}, "error to add the book")
+        return gera_response(400, "book", {}, "error to add the book")
 
 
 def delete_book(id_book, session):
