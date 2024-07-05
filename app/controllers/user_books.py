@@ -1,16 +1,15 @@
 from ..models.models import Livro, User, user_books
 from ..controllers import gera_response
 from app.db import db
+from jsonschema import validate, ValidationError
 
-user_books_schema = {
+user_books_schema_put = {
     "type": "object",
-    "title": "user_books_schema",
+    "title": "user_books_put",
     "properties": {
-        "id_book": {"type": "integer"},
-        "id_user": {"type": "integer"},
-        "status": {"type": "string"}
+        "status": {"type": "string", "enum": ["Read", "Reading"]}
     },
-    "required": ["id_book", "id_user"],
+    "required": ["status"],
     "additionalProperties": False
 }
 
@@ -50,6 +49,8 @@ def add_user_book(user_id, session, body):
 
 def upd_user_book(session, user_id, book_id, body):
     try:
+        validate(instance=body, schema=user_books_schema_put)
+
         user_book_obj = session.execute(
             user_books.select().where(
                 user_books.c.user_id == user_id,
@@ -77,7 +78,9 @@ def upd_user_book(session, user_id, book_id, body):
         ).first()
 
         return gera_response(200, "user_book", user_book_to_json(user_book_obj), "book status updated")
-
+    except ValidationError as e:
+        print(e)
+        return gera_response(400, "user_book", {}, f"validation error: {e.message}")
     except Exception as e:
         print(e)
         return gera_response(400, "user_book", {}, "error to update the user_book")

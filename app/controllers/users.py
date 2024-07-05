@@ -2,6 +2,7 @@ from flask import jsonify
 from ..models.models import User
 from . import gera_response
 from sqlalchemy.exc import IntegrityError
+from jsonschema import ValidationError, validate
 
 user_schema = {
     "type": "object",
@@ -36,6 +37,8 @@ def take_all_users():
 
 def create_user(body, session):
     try:
+        validate(instance=body, schema=user_schema)
+
         if "user_name" not in body or body["user_name"].strip() == "":
             return gera_response(400, "user", {}, "user name required")
         user_name = body["user_name"]
@@ -53,7 +56,9 @@ def create_user(body, session):
             return gera_response(400, "user", {}, "username already used")
 
         return gera_response(200, "user", new_user.to_json(), "user added")
-
+    except ValidationError as e:
+        print(e)
+        return gera_response(400, "user", {}, f"validation error: {e.message}")
     except Exception as e:
         print(e)
         return gera_response(400, "user", {}, "error to add the user")
