@@ -4,20 +4,8 @@ from . import gera_response
 from sqlalchemy.exc import IntegrityError
 from jsonschema import ValidationError, validate
 
-user_schema = {
-    "type": "object",
-    "title": "user_schema",
-    "properties": {
-        "user_name": {"type": "string"},
-        "password": {"type": "string"}
-    },
-    "required": ["user_name", "password"],
-    "additionalProperties": False
-}
-
 
 def take_user(id_user):
-
     user_exist = True if User.query.filter_by(id=id_user).first() else False
 
     if not user_exist:
@@ -37,7 +25,6 @@ def take_all_users():
 
 def create_user(body, session):
     try:
-        validate(instance=body, schema=user_schema)
 
         if "user_name" not in body or body["user_name"].strip() == "":
             return gera_response(400, "user", {}, "user name required")
@@ -56,9 +43,6 @@ def create_user(body, session):
             return gera_response(400, "user", {}, "username already used")
 
         return gera_response(200, "user", new_user.to_json(), "user added")
-    except ValidationError as e:
-        print(e)
-        return gera_response(400, "user", {}, f"validation error: {e.message}")
     except Exception as e:
         print(e)
         return gera_response(400, "user", {}, "error to add the user")

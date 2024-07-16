@@ -1,7 +1,8 @@
 from flask import Blueprint, request
 from ..controllers.user_books import add_user_book, upd_user_book, delete_user_book, take_user_books
 from ..db import db
-
+from app.jsonschema.schemas import user_books_schema_put
+from app.controllers import validate_schema
 
 user_books_bp = Blueprint("user_books", __name__, url_prefix="/users")
 
@@ -18,6 +19,7 @@ def get_user_books_route(user_id):
 
 
 @user_books_bp.route("/<int:id_user>/books/<int:id_book>", methods=["PUT"])
+@validate_schema(user_books_schema_put)
 def put_user_book_route(id_user, id_book):
     session = db.session
     body = request.get_json()

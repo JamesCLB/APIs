@@ -1,6 +1,8 @@
 from flask import request, Blueprint
 from app.db import db
-from ..controllers.users import take_all_users, create_user, delete_user, upd_user, take_user
+from app.controllers.users import take_all_users, create_user, delete_user, upd_user, take_user
+from app.controllers import validate_schema
+from app.jsonschema.schemas import user_schema
 
 users_bp = Blueprint("users", __name__)
 
@@ -19,6 +21,7 @@ def get_users_route():
 
 
 @users_bp.route("/user", methods=["POST"])
+@validate_schema(user_schema)
 def create_user_route():
     body = request.get_json()
     session = db.session

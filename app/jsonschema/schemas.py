@@ -2,10 +2,10 @@ user_schema = {
     "type": "object",
     "title": "user_schema",
     "properties": {
-        "username": {"type": "string"},
+        "user_name": {"type": "string"},
         "password": {"type": "string"}
     },
-    "required": ["username", "password"],
+    "required": ["user_name", "password"],
     "additionalProperties": False
 }
 
@@ -13,19 +13,30 @@ book_schema = {
     "type": "object",
     "title": "book_schema",
     "properties": {
-        "title": {"type": "String"},
-        "author": {"type": "String"},
-        "published_date": {"type": "String"}
+        "title": {"type": "string"},
+        "author": {"type": "string"},
+        "published_date": {"type": "string"}
     },
     "required": ["title", "author", "published_date"],
     "additionalProperties": False
 }
 
-user_books_put_schema = {
+book_schema_put = {
+    "type": "object",
+    "title": "book_put",
+    "properties": {
+        "title": {"type": "string"},
+        "author": {"type": "string"},
+        "published_date": {"type": "string"}
+    },
+    "additionalProperties": False
+}
+
+user_books_schema_put = {
     "type": "object",
     "title": "user_books_put",
     "properties": {
-        "status": {"type": "String", "enum": ["Read", "Reading"]}
+        "status": {"type": "string", "enum": ["Read", "Reading"]}
     },
     "required": ["status"],
     "additionalProperties": False
